@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 class Category(models.Model):
     name = models.CharField(max_length=128)
@@ -28,3 +29,9 @@ class Task(models.Model):
     assigned_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now=True)
     finished_at = models.DateTimeField()
+
+    def clean(self):
+        if self.state is 'ISSUE_ASSIGNED':
+            if self.assigned is None:
+                raise ValidationError(_('State ISSUE ASSIGNED but no one assigned'))
+

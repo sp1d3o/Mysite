@@ -80,3 +80,19 @@ def my_tasks(request):
 
     return Response(serializer.data)
 
+def task_save(request, task_id):
+    tmp = Task.objects.get(id=task_id)
+
+    data = request.data
+
+    current_time = dt.datetime.now()
+
+    if data['assigned'] is not None and data['assigned_at'] is None:
+        data['assigned_at'] = current_time
+        tmp.state == Task.ISSUE_ASSIGNED
+
+    if tmp.state is Task.ISSUE_DONE and data['completed_at'] is None:
+        data['completed_at'] = current_time
+
+    if tmp.state is Task.ISSUE_CANCELED and data['completed_at'] is None:
+        data['completed_at'] = current_time
